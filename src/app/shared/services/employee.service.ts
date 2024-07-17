@@ -27,9 +27,12 @@ export class EmployeeService {
     method : 'POST',
     headers : {
       'CustomerId' : '_d97njgf5objr8ftoxas7sp1heh',
-    }
+    }, body: JSON.stringify({query}),
 
-  })
+  });
+  const result = await respons.json()
+
+  return result.data.employees;
   }
   
 

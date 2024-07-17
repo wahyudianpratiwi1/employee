@@ -8,6 +8,8 @@ import {DxButtonModule, DxDataGridModule} from 'devextreme-angular';
 
 })
 export class HumanresourceComponent implements OnInit{
+  employees: any[] =[];
+
   ngOnInit(): void {
     
   }
