@@ -30,6 +30,20 @@ import { EmployeeService } from '../../shared/services/employee.service';
 export class HumanresourceComponent implements OnInit {
   employeeStatuses: any[] = [];
 
+  newEmployeeStatus: any={
+    employeeStatusName : '',
+    employeeStatusType : '',
+    duration  : null,
+    isPKWTCompensation : null,
+    isProbation : null,
+  };
+  employeeStatusType:{
+    id: string,
+    name: string
+  }[]=[
+    {id:'PKWT', name:'PKWT'},
+    {id: 'PKWTT', name:'PKWTT'}];
+
   constructor(private employeeStatusService: EmployeeService) {}
 
   async ngOnInit() {
@@ -60,12 +74,33 @@ export class HumanresourceComponent implements OnInit {
 
    editEmployeeStatus(id: string) {
     console.log('Edit employee status with ID:', id);
-    // Implementasi logika edit di sini
-  }
+   }
 
   deleteEmployeeStatus(id: string) {
     console.log('Delete employee status with ID:', id);
-    // Implementasi logika hapus di sini
+    try{
+      this.employeeStatusService.deleteEmployeeStatuses(id);
+      this.employeeStatuses = this.employeeStatuses.filter(status=> status.id!==id);
+    }catch(error){
+      console.error('Error fetching employee statuses:', error);
+    }
+  }
+
+  async createEmployeeStatus(){
+    try{
+      const newStatus = await this.employeeStatusService.createEmployeeStatuses(this.newEmployeeStatus);
+      this.employeeStatuses.push(newStatus);
+      console.log("New Employee Status created", newStatus);
+      this.newEmployeeStatus={
+        employeeStatusName : '',
+        employeeStatusType : '',
+        duration  : null,
+        isPKWTCompensation : null,
+        isProbation : null,
+      }
+    }catch(error){
+      console.error('Error create employee statuses:', error);
+    }
   }
 
   

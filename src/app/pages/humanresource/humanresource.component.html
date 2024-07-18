@@ -11,37 +11,53 @@
 <!-- <ng-template #loading>
     <p>Loading employees...</p>
 </ng-template> -->
+<h2 class="content-block">Human Resource</h2>
 
-<dx-data-grid [dataSource]="employeeStatuses" [showBorders]="true">
-    <dxi-column dataField="id" caption="ID"></dxi-column>
-    <dxi-column dataField="employeeStatusName" caption="Employee Status Name"></dxi-column>
-    <dxi-column dataField="employeeStatusType" caption="Employee Status"></dxi-column>
-    <dxi-column dataField="duration" caption="Duration"></dxi-column>
-    <dxi-column dataField="deskription" caption="Description"></dxi-column>
+<dx-tree-list class= "dx-card wide-card" 
+[dataSource]="employeeStatuses" 
+[showBorders]="true"
+[headerFilter]="{visible : true}"
+[filterRow]="{visible : true, applyFilter : 'auto'}"
+>
+    <dxo-editing mode="form" [allowAdding]="true"  > 
+        <dxo-form (ngSubmit) ="createEmployeeStatus()">
+            <dxi-item dataField="employeeStatusName">
+                <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+            </dxi-item>
+            <dxi-item dataField="employeeStatusType" editorType="dxSelectBox" [editorOptions]="{dataSource: employeeStatusType}"></dxi-item>
+             <!-- <dxi-item dataField="employeeStatusType">
+                <dx-drop-down-box [dataSource]="employeeStatusType" displayExpr="name" valueExpr="id"[(value)]="newEmployeeStatus.employeeStatusType"></dx-drop-down-box>
+             </dxi-item> -->
+
+            <dxi-item dataField="duration">                                              
+                <dxi-validation-rule type="required" message="Duration is required"></dxi-validation-rule>
+            </dxi-item>
+        </dxo-form>
+
+    </dxo-editing>
+    
+    <dxi-column dataField="id" caption="ID" [filterOperations]="['contains','startswith','equals']"></dxi-column>
+    <dxi-column dataField="employeeStatusName" caption="Employee Status Name"[filterOperations]="['contains','startswith','equals']"></dxi-column>
+    <dxi-column dataField="employeeStatusType" caption="Employee Status"[filterOperations]="['contains','startswith','equals']"></dxi-column>
+    <dxi-column dataField="duration" caption="Duration (in months)"[filterOperations]="['contains','startswith','equals']"></dxi-column>
+    <dxi-column dataField="deskription" caption="Description"[filterOperations]="['contains','startswith','equals']"></dxi-column>
     <dxi-column caption="Actions" [width]="150" [alignment]="'center'" cellTemplate="actionsTemplate"></dxi-column>
 
     <div *dxTemplate="let data of 'actionsTemplate'">
-        <button (click)="editEmployeeStatus(data.data.id)" class="btn btn-primary btn-sm">Edit</button>
-        <button (click)="deleteEmployeeStatus(data.data.id)" class="btn btn-danger btn-sm">Hapus</button>
+        <dx-button (click)="editEmployeeStatus(data.data.id)" icon="rename"></dx-button>
+        <dx-button (click)="deleteEmployeeStatus(data.data.id)" icon="trash"></dx-button>
     </div>
-</dx-data-grid>
-<!-- 
-<dx-data-grid [dataSource]="employeeStatuses" [columns]="[
-    { dataField: 'id', caption: 'ID' },
-    { dataField: 'employeeStatusName', caption: 'Employee Status Name' },
-    { dataField: 'employeeStatusType', caption: 'Employee Status' },
-    { dataField: 'duration', caption: 'Duration' },
-    { dataField: 'duration', caption: 'Duration' },
-    { dataField: 'deskription', caption: 'Description' },
-    {
-        caption : 'Actions',
-        cellTemplate : 'actionsTemplate',
-        width: 150,
-        alignment: 'center',
-    }
-  ]" [showBorders]="true">
-<div *dxTemplate="let data of 'actionsTemplate'">
-    <button (click)="editEmployeeStatus(data.data.id)" class="btn btn-primary btn-sm">Edit</button>
-    <button (click)="deleteEmployeeStatus(data.data.id)" class="btn btn-danger btn-sm">Hapus</button>
-</div>
-</dx-data-grid> -->
+</dx-tree-list>
+
+<!-- <div class="form-container mt-3">
+    <dxo-form (ngSubmit) ="createEmployeeStatus()">
+        <dxi-item dataField="employeeStatusName">
+            <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+        </dxi-item>
+        <dxi-item dataField="employeeStatusType" editorType="dxSelectBox" [editorOptions]="{dataSource: employeeStatuses}"></dxi-item>
+        <dxi-item dataField="duration">                                              
+            <dxi-validation-rule type="required" message="Duration is required"></dxi-validation-rule>
+        </dxi-item>
+    </dxo-form>
+</div> -->
+
