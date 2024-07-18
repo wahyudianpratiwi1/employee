@@ -17,9 +17,11 @@
 [dataSource]="employeeStatuses" 
 [showBorders]="true"
 [headerFilter]="{visible : true}"
+keyExpr="id"
+(onSaving)="onSaving($event)"
 [filterRow]="{visible : true, applyFilter : 'auto'}"
 >
-    <dxo-editing mode="form" [allowAdding]="true"  > 
+    <!-- <dxo-editing mode="form" [allowAdding]="true"  > 
         <dxo-form (ngSubmit) ="createEmployeeStatus()">
             <dxi-item dataField="employeeStatusName">
                 <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
@@ -29,13 +31,34 @@
                 <dx-drop-down-box [dataSource]="employeeStatusType" displayExpr="name" valueExpr="id"[(value)]="newEmployeeStatus.employeeStatusType"></dx-drop-down-box>
              </dxi-item> -->
 
-            <dxi-item dataField="duration">                                              
+            <!-- <dxi-item dataField="duration">                                              
                 <dxi-validation-rule type="required" message="Duration is required"></dxi-validation-rule>
             </dxi-item>
         </dxo-form>
 
+    </dxo-editing>  -->
+    <dxo-editing mode="form" [allowAdding]="true" [allowUpdating]="true" [allowDeleting]="true" [useIcons]="true">
+    <dxo-popup title="Employee Status" [showTitle]="true" [width]="700" [height]="525">
+    </dxo-popup>
+    <dxo-form>
+        <dxi-item dataField="employeeStatusName">
+            <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+        </dxi-item>
+        <dxi-item dataField="employeeStatusType" editorType="dxSelectBox" [editorOptions]="{
+              dataSource: employeeStatusTypes,
+              displayExpr: 'name',
+              valueExpr: 'id'
+            }">
+            <dxi-validation-rule type="required" message="Status Type is required"></dxi-validation-rule>
+        </dxi-item>
+        <dxi-item dataField="duration" editorType="dxNumberBox" [editorOptions]="{min: 1}">
+            <dxi-validation-rule type="required" message="Duration is required"></dxi-validation-rule>
+        </dxi-item>
+        <dxi-item dataField="isPKWTCompensation" editorType="dxCheckBox"></dxi-item>
+        <dxi-item dataField="isProbation" editorType="dxCheckBox"></dxi-item>
+    </dxo-form>
     </dxo-editing>
-    
+
     <dxi-column dataField="id" caption="ID" [filterOperations]="['contains','startswith','equals']"></dxi-column>
     <dxi-column dataField="employeeStatusName" caption="Employee Status Name"[filterOperations]="['contains','startswith','equals']"></dxi-column>
     <dxi-column dataField="employeeStatusType" caption="Employee Status"[filterOperations]="['contains','startswith','equals']"></dxi-column>
@@ -43,10 +66,10 @@
     <dxi-column dataField="deskription" caption="Description"[filterOperations]="['contains','startswith','equals']"></dxi-column>
     <dxi-column caption="Actions" [width]="150" [alignment]="'center'" cellTemplate="actionsTemplate"></dxi-column>
 
-    <div *dxTemplate="let data of 'actionsTemplate'">
+    <!-- <div *dxTemplate="let data of 'actionsTemplate'">
         <dx-button (click)="editEmployeeStatus(data.data.id)" icon="rename"></dx-button>
         <dx-button (click)="deleteEmployeeStatus(data.data.id)" icon="trash"></dx-button>
-    </div>
+    </div> -->
 </dx-tree-list>
 
 <!-- <div class="form-container mt-3">

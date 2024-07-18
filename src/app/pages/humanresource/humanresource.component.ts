@@ -37,17 +37,19 @@ export class HumanresourceComponent implements OnInit {
     isPKWTCompensation : null,
     isProbation : null,
   };
-  employeeStatusType:{
-    id: string,
-    name: string
-  }[]=[
-    {id:'PKWT', name:'PKWT'},
-    {id: 'PKWTT', name:'PKWTT'}];
+  employeeStatusTypes: { id: string; name: string }[] = [
+    { id: 'PKWT', name: 'PKWT' },
+    { id: 'PKWTT', name: 'PKWTT' },
+  ];
 
   constructor(private employeeStatusService: EmployeeService) {}
 
   async ngOnInit() {
-    try {
+    await this.loadEmployeeStatuses();
+  }
+
+  async loadEmployeeStatuses() {
+     try {
       const rawStatuses = await this.employeeStatusService.getEmployeeStatuses()
       this.employeeStatuses = await this.transformEmployeeStatuses(rawStatuses);
       console.log('Employee statuses:', this.employeeStatuses);
@@ -72,8 +74,18 @@ export class HumanresourceComponent implements OnInit {
     return '';
   }
 
-   editEmployeeStatus(id: string) {
-    console.log('Edit employee status with ID:', id);
+   async updateEmployeeStatus(id: string, status: any) {
+     console.log('Edit employee status with ID:', id);
+     try {
+       const updatedStatus = await this.employeeStatusService.updateEmployeeStatuses(id, status);
+      const index = this.employeeStatuses.findIndex(s => s.id === id);
+      if (index !== -1) {
+        this.employeeStatuses[index] = updatedStatus;
+      }
+      console.log("Employee Status updated", updatedStatus);
+    } catch (error) {
+      console.error('Error updating employee status:', error);
+    }
    }
 
   deleteEmployeeStatus(id: string) {
@@ -86,11 +98,63 @@ export class HumanresourceComponent implements OnInit {
     }
   }
 
-  async createEmployeeStatus(){
+  // async onSaving(e: any) {
+  //   e.cancel = true; // Prevent the default saving behavior
+    
+  //   if (e.changes.length > 0) {
+  //     const change = e.changes[0];
+      
+  //     if (change.type === 'insert') {
+  //       await this.createEmployeeStatus(change.data);
+  //     } else if (change.type === 'update') {
+  //       await this.updateEmployeeStatus(change.key, change.data);
+  //     } else if (change.type === 'remove') {
+  //       await this.deleteEmployeeStatus(change.key);
+  //     }
+      
+  //     await this.loadEmployeeStatuses(); // Reload the data
+  //   }
+  // }
+
+  async onSaving(e: any) {
+    e.cancel = true;
+    if (e.changes.length > 0) {
+      const change = e.changes[0];
+      try {
+        let result;
+        if (change.type === 'insert') {
+          result = await this.employeeStatusService.createEmployeeStatuses(change.data);
+        } else if (change.type === 'update') {
+          result = await this.employeeStatusService.updateEmployeeStatuses(change.key, change.data);
+        } else if (change.type === 'remove') {
+          await this.employeeStatusService.deleteEmployeeStatuses(change.key);
+          const index = this.employeeStatuses.findIndex(status => status.id === change.key);
+          if (index !== -1) {
+            this.employeeStatuses.splice(index, 1);
+          }
+        }
+
+        if (result) {
+          const transformedResult = this.transformEmployeeStatuses([result])[0];
+          const index = this.employeeStatuses.findIndex(status => status.id === result.id);
+          if (index !== -1) {
+            this.employeeStatuses[index] = transformedResult;
+          } else {
+            this.employeeStatuses.push(transformedResult);
+          }
+        }
+        e.component.refresh(true);
+      } catch (error) {
+        console.error('Error saving employee status:', error);
+      }
+    }
+  }
+
+  async createEmployeeStatus(status: any){
     try{
       const newStatus = await this.employeeStatusService.createEmployeeStatuses(this.newEmployeeStatus);
       this.employeeStatuses.push(newStatus);
-      console.log("New Employee Status created", newStatus);
+      console.log("New Employee Status created", status);
       this.newEmployeeStatus={
         employeeStatusName : '',
         employeeStatusType : '',

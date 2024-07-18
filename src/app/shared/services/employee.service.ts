@@ -54,20 +54,22 @@ export class EmployeeService {
   }
 
   async createEmployeeStatuses(newStatus : any){
-    const mutation = `mutation ($employeeStatus: [EmployeeStatusInput!]!) {
-  createEmployeeStatuses(employeeStatus: "$employeeStatus")
-}`;
-const variables= {
-    employeeStatus: [
-      {
-          employeeStatusName : "",
-          employeeStatusType: "",
-          duration: null,
-          isPKWTCompensation: null,
-          isProbation: null
+    const mutation = `
+      mutation ($employeeStatus: [EmployeeStatusInput!]!) {
+        createEmployeeStatuses(employeeStatus: $employeeStatus)
       }
-    ]
-}
+    `;
+  const variables = {
+      employeeStatus: [
+        {
+          employeeStatusName: newStatus.employeeStatusName,
+          employeeStatusType: newStatus.employeeStatusType,
+          duration: newStatus.duration,
+          isPKWTCompensation: newStatus.isPKWTCompensation,
+          isProbation: newStatus.isProbation
+        }
+      ]
+    };
 
     try{
       const response = await fetch(this.apiUrl, {
@@ -78,14 +80,68 @@ const variables= {
         },
         body: JSON.stringify({query: mutation, variables}),
       });
-      if(!response.ok){
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+
+      const result = await response.json();
+  if (result.errors) {
+    throw new Error(result.errors[0].message);
+  }
+  return result.data.createEmployeeStatuses[0];
+      // if(!response.ok){
+      //   throw new Error(`HTTP error! status: ${response.status}`);
+      // }
 
     }catch(error){
       console.error('Error mutation:', error);
       throw error
     }
+    
+  }
+
+  async updateEmployeeStatuses(id: string, updatedStatus: any) {
+    const mutation = `mutation ($employeeStatus: EmployeeStatusInput!) {
+  updateEmployeeStatus(employeeStatus: $employeeStatus)
+}`
+    const variables = {
+      id: id,
+      input: {
+        employeeStatusName: updatedStatus.employeeStatusName,
+        employeeStatusType: updatedStatus.employeeStatusType,
+        duration: updatedStatus.duration,
+        isPKWTCompensation: updatedStatus.isPKWTCompensation,
+        isProbation: updatedStatus.isProbation
+      }
+    };
+     try{
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'CustomerId': '_d97njgf5objr8ftoxas7sp1heh',
+        },
+        body: JSON.stringify({query: mutation, variables}),
+      });
+       
+       if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    if (result.errors) {
+      throw new Error(result.errors[0].message);
+    }
+    return result.data.updateEmployeeStatus;
+  } catch (error) {
+    console.error('Error mutation:', error);
+    throw error;
+  }
+    //   if(!response.ok){
+    //     throw new Error(`HTTP error! status: ${response.status}`);
+    //   }
+
+    // }catch(error){
+    //   console.error('Error mutation:', error);
+    //   throw error
+    // }
   }
 
   async deleteEmployeeStatuses(id: string){
