@@ -1,7 +1,47 @@
-<dx-data-grid class="dxcard wide-card">
-    <dxi-column dataField="Employee ID"></dxi-column>
-    <dxi-column dataField="Employee Name"></dxi-column>
-    <dxi-column dataField="Organization"></dxi-column>
-    <dxi-column dataField="Job Position"></dxi-column>
-    <dxi-column dataField="Join Date"></dxi-column>
+<!-- <div div *ngIf="employeeStatuses.length > 0; else loading"> -->
+<!-- <dx-data-grid class="dxcard wide-card" 
+[dataSource]="employeeStatuses">
+    <dxi-column dataField="id", caption="ID Employee"></dxi-column>
+    <dxi-column dataField="employeeStatusName", caption="Employee Name"></dxi-column>
+    <dxi-column dataField="employeeStatusType", caption="Organization"></dxi-column>
+    <dxi-column dataField="duration", caption="Job Position"></dxi-column>
+    <dxi-column dataField="createdAt", caption="Join Date"></dxi-column>
+</dx-data-grid> -->
+
+<!-- <ng-template #loading>
+    <p>Loading employees...</p>
+</ng-template> -->
+
+<dx-data-grid [dataSource]="employeeStatuses" [showBorders]="true">
+    <dxi-column dataField="id" caption="ID"></dxi-column>
+    <dxi-column dataField="employeeStatusName" caption="Employee Status Name"></dxi-column>
+    <dxi-column dataField="employeeStatusType" caption="Employee Status"></dxi-column>
+    <dxi-column dataField="duration" caption="Duration"></dxi-column>
+    <dxi-column dataField="deskription" caption="Description"></dxi-column>
+    <dxi-column caption="Actions" [width]="150" [alignment]="'center'" cellTemplate="actionsTemplate"></dxi-column>
+
+    <div *dxTemplate="let data of 'actionsTemplate'">
+        <button (click)="editEmployeeStatus(data.data.id)" class="btn btn-primary btn-sm">Edit</button>
+        <button (click)="deleteEmployeeStatus(data.data.id)" class="btn btn-danger btn-sm">Hapus</button>
+    </div>
 </dx-data-grid>
+<!-- 
+<dx-data-grid [dataSource]="employeeStatuses" [columns]="[
+    { dataField: 'id', caption: 'ID' },
+    { dataField: 'employeeStatusName', caption: 'Employee Status Name' },
+    { dataField: 'employeeStatusType', caption: 'Employee Status' },
+    { dataField: 'duration', caption: 'Duration' },
+    { dataField: 'duration', caption: 'Duration' },
+    { dataField: 'deskription', caption: 'Description' },
+    {
+        caption : 'Actions',
+        cellTemplate : 'actionsTemplate',
+        width: 150,
+        alignment: 'center',
+    }
+  ]" [showBorders]="true">
+<div *dxTemplate="let data of 'actionsTemplate'">
+    <button (click)="editEmployeeStatus(data.data.id)" class="btn btn-primary btn-sm">Edit</button>
+    <button (click)="deleteEmployeeStatus(data.data.id)" class="btn btn-danger btn-sm">Hapus</button>
+</div>
+</dx-data-grid> -->

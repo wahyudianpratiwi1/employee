@@ -20,6 +20,8 @@ import { SeveranceComponent } from './pages/payroll/severance/severance.componen
 import { PivotComponent } from './pages/pivot/pivot.component';
 import { CommonModule } from '@angular/common';
 import { DxButtonModule, DxDataGridModule } from 'devextreme-angular';
+import { EmployeeService } from './shared/services/employee.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -50,12 +52,13 @@ import { DxButtonModule, DxDataGridModule } from 'devextreme-angular';
     AppRoutingModule,
     CommonModule,
     DxDataGridModule,
-    DxButtonModule
+    DxButtonModule,
   ],
   providers: [
     AuthService,
     ScreenService,
-    AppInfoService
+    AppInfoService,
+    EmployeeService
   ],
   bootstrap: [AppComponent]
 })
