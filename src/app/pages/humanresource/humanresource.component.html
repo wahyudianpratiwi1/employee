@@ -20,6 +20,7 @@
 keyExpr="id"
 (onSaving)="onSaving($event)"
 [filterRow]="{visible : true, applyFilter : 'auto'}"
+
 >
     <!-- <dxo-editing mode="form" [allowAdding]="true"  > 
         <dxo-form (ngSubmit) ="createEmployeeStatus()">
@@ -52,12 +53,13 @@ keyExpr="id"
             <dxi-validation-rule type="required" message="Status Type is required"></dxi-validation-rule>
         </dxi-item>
         <dxi-item dataField="duration" editorType="dxNumberBox" [editorOptions]="{min: 1}">
-            <dxi-validation-rule type="required" message="Duration is required"></dxi-validation-rule>
         </dxi-item>
         <dxi-item dataField="isPKWTCompensation" editorType="dxCheckBox"></dxi-item>
         <dxi-item dataField="isProbation" editorType="dxCheckBox"></dxi-item>
     </dxo-form>
     </dxo-editing>
+    
+    <dxo-paging [pageSize]="10"></dxo-paging>
 
     <dxi-column dataField="id" caption="ID" [filterOperations]="['contains','startswith','equals']"></dxi-column>
     <dxi-column dataField="employeeStatusName" caption="Employee Status Name"[filterOperations]="['contains','startswith','equals']"></dxi-column>

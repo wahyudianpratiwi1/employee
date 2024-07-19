@@ -97,13 +97,13 @@ export class EmployeeService {
     
   }
 
-  async updateEmployeeStatuses(id: string, updatedStatus: any) {
+  async updateEmployeeStatuses( updatedStatus: any) {
     const mutation = `mutation ($employeeStatus: EmployeeStatusInput!) {
   updateEmployeeStatus(employeeStatus: $employeeStatus)
 }`
     const variables = {
-      id: id,
-      input: {
+      employeeStatus:{
+        id:updatedStatus.id,
         employeeStatusName: updatedStatus.employeeStatusName,
         employeeStatusType: updatedStatus.employeeStatusType,
         duration: updatedStatus.duration,
@@ -129,19 +129,13 @@ export class EmployeeService {
     if (result.errors) {
       throw new Error(result.errors[0].message);
     }
+    console.log("error", response)
     return result.data.updateEmployeeStatus;
   } catch (error) {
     console.error('Error mutation:', error);
     throw error;
   }
-    //   if(!response.ok){
-    //     throw new Error(`HTTP error! status: ${response.status}`);
-    //   }
-
-    // }catch(error){
-    //   console.error('Error mutation:', error);
-    //   throw error
-    // }
+  
   }
 
   async deleteEmployeeStatuses(id: string){

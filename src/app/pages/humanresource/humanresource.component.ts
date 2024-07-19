@@ -37,6 +37,15 @@ export class HumanresourceComponent implements OnInit {
     isPKWTCompensation : null,
     isProbation : null,
   };
+
+  // newupdateEmployeeStatus: any={
+  //   employeeStatusName : '',
+  //   employeeStatusType : '',
+  //   duration  : null,
+  //   isPKWTCompensation : null,
+  //   isProbation : null,
+  // }
+
   employeeStatusTypes: { id: string; name: string }[] = [
     { id: 'PKWT', name: 'PKWT' },
     { id: 'PKWTT', name: 'PKWTT' },
@@ -77,7 +86,8 @@ export class HumanresourceComponent implements OnInit {
    async updateEmployeeStatus(id: string, status: any) {
      console.log('Edit employee status with ID:', id);
      try {
-       const updatedStatus = await this.employeeStatusService.updateEmployeeStatuses(id, status);
+       const updatedStatus = await this.employeeStatusService.updateEmployeeStatuses(status);
+      
       const index = this.employeeStatuses.findIndex(s => s.id === id);
       if (index !== -1) {
         this.employeeStatuses[index] = updatedStatus;
@@ -125,13 +135,13 @@ export class HumanresourceComponent implements OnInit {
         if (change.type === 'insert') {
           result = await this.employeeStatusService.createEmployeeStatuses(change.data);
         } else if (change.type === 'update') {
-          result = await this.employeeStatusService.updateEmployeeStatuses(change.key, change.data);
-        } else if (change.type === 'remove') {
-          await this.employeeStatusService.deleteEmployeeStatuses(change.key);
-          const index = this.employeeStatuses.findIndex(status => status.id === change.key);
-          if (index !== -1) {
-            this.employeeStatuses.splice(index, 1);
-          }
+          result = await this.employeeStatusService.updateEmployeeStatuses(change.data);
+        // } else if (change.type === 'remove') {
+        //   await this.employeeStatusService.deleteEmployeeStatuses(change.key);
+        //   const index = this.employeeStatuses.findIndex(status => status.id === change.key);
+        //   if (index !== -1) {
+        //     this.employeeStatuses.splice(index, 1);
+        //   }
         }
 
         if (result) {
