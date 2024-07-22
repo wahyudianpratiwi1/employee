@@ -65,8 +65,8 @@ export class EmployeeService {
           employeeStatusName: newStatus.employeeStatusName,
           employeeStatusType: newStatus.employeeStatusType,
           duration: newStatus.duration,
-          isPKWTCompensation: newStatus.isPKWTCompensation,
-          isProbation: newStatus.isProbation
+          isPKWTCompensation: Boolean(newStatus.isPKWTCompensation),
+          isProbation: Boolean(newStatus.isProbation)
         }
       ]
     };
@@ -102,13 +102,13 @@ export class EmployeeService {
   updateEmployeeStatus(employeeStatus: $employeeStatus)
 }`
     const variables = {
-      id: id,
-      input: {
+      employeeStatus: {
+        id : updatedStatus.id,
         employeeStatusName: updatedStatus.employeeStatusName,
         employeeStatusType: updatedStatus.employeeStatusType,
         duration: updatedStatus.duration,
-        isPKWTCompensation: updatedStatus.isPKWTCompensation,
-        isProbation: updatedStatus.isProbation
+        isPKWTCompensation: Boolean(updatedStatus.isPKWTCompensation),
+        isProbation: Boolean(updatedStatus.isProbation)
       }
     };
      try{

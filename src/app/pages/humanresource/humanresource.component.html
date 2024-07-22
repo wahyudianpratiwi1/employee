@@ -1,16 +1,4 @@
-<!-- <div div *ngIf="employeeStatuses.length > 0; else loading"> -->
-<!-- <dx-data-grid class="dxcard wide-card" 
-[dataSource]="employeeStatuses">
-    <dxi-column dataField="id", caption="ID Employee"></dxi-column>
-    <dxi-column dataField="employeeStatusName", caption="Employee Name"></dxi-column>
-    <dxi-column dataField="employeeStatusType", caption="Organization"></dxi-column>
-    <dxi-column dataField="duration", caption="Job Position"></dxi-column>
-    <dxi-column dataField="createdAt", caption="Join Date"></dxi-column>
-</dx-data-grid> -->
 
-<!-- <ng-template #loading>
-    <p>Loading employees...</p>
-</ng-template> -->
 <h2 class="content-block">Human Resource</h2>
 
 <dx-tree-list class= "dx-card wide-card" 
@@ -18,7 +6,10 @@
 [showBorders]="true"
 [headerFilter]="{visible : true}"
 keyExpr="id"
+(onRowClick)="onRowClick($event)"
 (onSaving)="onSaving($event)"
+(onEditorPreparing)="onEditorPreparing($event)"
+
 [filterRow]="{visible : true, applyFilter : 'auto'}"
 >
     <!-- <dxo-editing mode="form" [allowAdding]="true"  > 
@@ -54,9 +45,17 @@ keyExpr="id"
         <dxi-item dataField="duration" editorType="dxNumberBox" [editorOptions]="{min: 1}">
             <dxi-validation-rule type="required" message="Duration is required"></dxi-validation-rule>
         </dxi-item>
-        <dxi-item dataField="isPKWTCompensation" editorType="dxCheckBox"></dxi-item>
-        <dxi-item dataField="isProbation" editorType="dxCheckBox"></dxi-item>
-    </dxo-form>
+    <!-- <dxi-item dataField="isPKWTCompensation" editorType="dxCheckBox" dataType="boolean">
+        <dxo-label text="PKWT Compensation"></dxo-label>
+    </dxi-item> -->
+    <dxi-item dataField="isPKWTCompensation" editorType="dxCheckBox">
+        <dxo-label text="PKWT Compensation"></dxo-label>
+    </dxi-item>
+    <dxi-item dataField="isProbation" editorType="dxCheckBox">
+        <dxo-label text="Probation"></dxo-label>
+    </dxi-item>
+    </dxo-form> 
+
     </dxo-editing>
 
     <dxi-column dataField="id" caption="ID" [filterOperations]="['contains','startswith','equals']"></dxi-column>
@@ -71,16 +70,4 @@ keyExpr="id"
         <dx-button (click)="deleteEmployeeStatus(data.data.id)" icon="trash"></dx-button>
     </div> -->
 </dx-tree-list>
-
-<!-- <div class="form-container mt-3">
-    <dxo-form (ngSubmit) ="createEmployeeStatus()">
-        <dxi-item dataField="employeeStatusName">
-            <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
-        </dxi-item>
-        <dxi-item dataField="employeeStatusType" editorType="dxSelectBox" [editorOptions]="{dataSource: employeeStatuses}"></dxi-item>
-        <dxi-item dataField="duration">                                              
-            <dxi-validation-rule type="required" message="Duration is required"></dxi-validation-rule>
-        </dxi-item>
-    </dxo-form>
-</div> -->
 
