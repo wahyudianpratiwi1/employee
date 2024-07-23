@@ -1,73 +1,65 @@
 
 <h2 class="content-block">Human Resource</h2>
-
-<dx-tree-list class= "dx-card wide-card" 
+<!-- <button [disabled]="isAdding" (click)="dataGrid.instance.addRow()">Add</button> -->
+<dx-data-grid #dataGrid class= "dx-card wide-card" 
 [dataSource]="employeeStatuses" 
 [showBorders]="true"
 [headerFilter]="{visible : true}"
 keyExpr="id"
-(onRowClick)="onRowClick($event)"
+(onEditingStart)="onEditingStart($event)"
+(onRowRemoved)="onRowRemoved($event)"
+
 (onSaving)="onSaving($event)"
 (onEditorPreparing)="onEditorPreparing($event)"
 
 [filterRow]="{visible : true, applyFilter : 'auto'}"
 >
-    <!-- <dxo-editing mode="form" [allowAdding]="true"  > 
-        <dxo-form (ngSubmit) ="createEmployeeStatus()">
-            <dxi-item dataField="employeeStatusName">
-                <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
-            </dxi-item>
-            <dxi-item dataField="employeeStatusType" editorType="dxSelectBox" [editorOptions]="{dataSource: employeeStatusType}"></dxi-item>
-             <!-- <dxi-item dataField="employeeStatusType">
-                <dx-drop-down-box [dataSource]="employeeStatusType" displayExpr="name" valueExpr="id"[(value)]="newEmployeeStatus.employeeStatusType"></dx-drop-down-box>
-             </dxi-item> -->
-
-            <!-- <dxi-item dataField="duration">                                              
-                <dxi-validation-rule type="required" message="Duration is required"></dxi-validation-rule>
-            </dxi-item>
-        </dxo-form>
-
-    </dxo-editing>  -->
     <dxo-editing mode="form" [allowAdding]="true" [allowUpdating]="true" [allowDeleting]="true" [useIcons]="true">
     <dxo-popup title="Employee Status" [showTitle]="true" [width]="700" [height]="525">
     </dxo-popup>
-    <dxo-form>
-        <dxi-item dataField="employeeStatusName">
-            <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
-        </dxi-item>
-        <dxi-item dataField="employeeStatusType" editorType="dxSelectBox" [editorOptions]="{
-              dataSource: employeeStatusTypes,
-              displayExpr: 'name',
-              valueExpr: 'id'
-            }">
-            <dxi-validation-rule type="required" message="Status Type is required"></dxi-validation-rule>
-        </dxi-item>
-        <dxi-item dataField="duration" editorType="dxNumberBox" [editorOptions]="{min: 1}">
-            <dxi-validation-rule type="required" message="Duration is required"></dxi-validation-rule>
-        </dxi-item>
-    <!-- <dxi-item dataField="isPKWTCompensation" editorType="dxCheckBox" dataType="boolean">
-        <dxo-label text="PKWT Compensation"></dxo-label>
-    </dxi-item> -->
-    <dxi-item dataField="isPKWTCompensation" editorType="dxCheckBox">
-        <dxo-label text="PKWT Compensation"></dxo-label>
-    </dxi-item>
-    <dxi-item dataField="isProbation" editorType="dxCheckBox">
-        <dxo-label text="Probation"></dxo-label>
-    </dxi-item>
-    </dxo-form> 
 
     </dxo-editing>
 
-    <dxi-column dataField="id" caption="ID" [filterOperations]="['contains','startswith','equals']"></dxi-column>
-    <dxi-column dataField="employeeStatusName" caption="Employee Status Name"[filterOperations]="['contains','startswith','equals']"></dxi-column>
-    <dxi-column dataField="employeeStatusType" caption="Employee Status"[filterOperations]="['contains','startswith','equals']"></dxi-column>
+    <!-- <dxi-column dataField="id" caption="ID" [filterOperations]="['contains','startswith','equals']" [allowEditing]="false"></dxi-column> -->
+    <dxi-column dataField="employeeStatusName" caption="Employee Status Name"[filterOperations]="['contains','startswith','equals']" allowEditing="false"></dxi-column>
+    <!-- <dxi-column dataField="employeeStatusType" caption="Employee Status"[filterOperations]="['contains','startswith','equals']"></dxi-column> -->
     <dxi-column dataField="duration" caption="Duration (in months)"[filterOperations]="['contains','startswith','equals']"></dxi-column>
-    <dxi-column dataField="deskription" caption="Description"[filterOperations]="['contains','startswith','equals']"></dxi-column>
-    <dxi-column caption="Actions" [width]="150" [alignment]="'center'" cellTemplate="actionsTemplate"></dxi-column>
-
+    <!-- <dxi-column dataField="deskription" caption="Description"[filterOperations]="['contains','startswith','equals']" [allowEditing]="false"></dxi-column> -->
+    <dxi-column dataField="description" caption="Description" [allowEditing]="false"
+        [calculateCellValue]="getDescription"></dxi-column>
+    <!-- <dxi-column caption="Actions" [width]="150" [alignment]="'center'" cellTemplate="actionsTemplate"></dxi-column> -->
+    <dxi-column dataField="employeeStatusType" caption="Status Type" [allowEditing]="true">
+        <dxo-lookup [dataSource]="employeeStatusTypes" displayExpr="name" valueExpr="id">
+        </dxo-lookup>
+        <dxi-validation-rule type="required" message="Status Type is required"></dxi-validation-rule>
+    </dxi-column>
+    <dxi-column dataField="isPKWTCompensation" editorType="dxCheckBox" dataType="boolean" [visible]="false">
+        <dxo-label text="PKWT Compensation"></dxo-label>
+    </dxi-column>
+    <dxi-column dataField="isProbation" editorType="dxCheckBox" dataType="boolean" [visible]="false">
+        <dxo-label text="Probation">
+            </dxo-label>
+    </dxi-column>
+    </dx-data-grid>
+    <!-- <dx-tooltip target="#isProbationTooltipForm" position="right" [visible]="true">
+                <div *dxTemplate="let tooltipData of 'content'">
+                    PKWT berdasarkan jangka waktu sebagaimana dimaksud dalam Pasal 5 Ayat 1 dapat dibuat untuk paling lama
+                    5(lima)
+                    tahun. (Pasal 8 Ayat 1 PP Nomor 35 Tahun 2021)
+                </div>
+            </dx-tooltip>
+            <i id="isProbationTooltipForm" class="dx-icon-info" style="margin-left: 5px; cursor: pointer;"></i>
+    </div> -->
+   
+    <!-- <dx-tooltip target="#isProbationTooltipForm" position="right" [visible]="true">
+        <div *dxTemplate="let tooltipData of 'content'">
+            PKWT berdasarkan jangka waktu sebagaimana dimaksud dalam Pasal 5 Ayat 1 dapat dibuat untuk paling lama 5(lima) tahun. (Pasal 8 Ayat 1 PP Nomor 35 Tahun 2021)
+        </div>
+    </dx-tooltip> -->
+   
     <!-- <div *dxTemplate="let data of 'actionsTemplate'">
         <dx-button (click)="editEmployeeStatus(data.data.id)" icon="rename"></dx-button>
         <dx-button (click)="deleteEmployeeStatus(data.data.id)" icon="trash"></dx-button>
     </div> -->
-</dx-tree-list>
+
 

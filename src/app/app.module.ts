@@ -19,7 +19,7 @@ import { DisbursementComponent } from './pages/payroll/disbursement/disbursement
 import { SeveranceComponent } from './pages/payroll/severance/severance.component';
 import { PivotComponent } from './pages/pivot/pivot.component';
 import { CommonModule } from '@angular/common';
-import { DxButtonModule, DxDataGridModule, DxDropDownBoxModule, DxSelectBoxModule, DxTreeListModule } from 'devextreme-angular';
+import { DxButtonModule, DxDataGridModule, DxDropDownBoxModule, DxSelectBoxModule, DxTooltipModule, DxTreeListModule } from 'devextreme-angular';
 import { EmployeeService } from './shared/services/employee.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 
@@ -55,7 +55,8 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
     DxButtonModule,
     DxTreeListModule,
     DxSelectBoxModule,
-    DxDropDownBoxModule
+    DxDropDownBoxModule,
+    DxTooltipModule
   ],
   providers: [
     AuthService,

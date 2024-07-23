@@ -1,24 +1,7 @@
-// import { CommonModule } from '@angular/common';
-// import { Component, OnInit } from '@angular/core';
-// import {DxButtonModule, DxDataGridModule} from 'devextreme-angular';
-// import { EmployeeService } from '../../shared/services/employee.service';
-// @Component({
-//   selector: 'app-humanresource',
-//   templateUrl: './humanresource.component.html',
-//   styleUrl: './humanresource.component.scss',
 
-// })
-// export class HumanresourceComponent implements OnInit{
-//   employeeStatuses: any[] =[];
-//   constructor(private employeeService: EmployeeService) {}
-//   async ngOnInit() {
-//     this.employeeStatuses = await this.employeeService.getEmployeeStatuses()
-//     console.log('Employees in Component:', this.employeeStatuses);
-//   }
-// }
-
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { EmployeeService } from '../../shared/services/employee.service';
+import { DxDataGridComponent } from 'devextreme-angular';
 
 
 
@@ -29,6 +12,7 @@ import { EmployeeService } from '../../shared/services/employee.service';
 })
 export class HumanresourceComponent implements OnInit {
   employeeStatuses: any[] = [];
+ @ViewChild(DxDataGridComponent, { static: false }) dataGrid!: DxDataGridComponent;
   selectedEmployeeStatus: EmployeeStatus | null = null;
   newEmployeeStatus: any = {
     id: '',
@@ -42,11 +26,18 @@ export class HumanresourceComponent implements OnInit {
     { id: 'PKWT', name: 'PKWT' },
     { id: 'PKWTT', name: 'PKWTT' },
   ];
+  isAdding: boolean = false;
+
+   onSaved(e: any) {
+    this.isAdding = false;
+  }
+
 
   constructor(private employeeStatusService: EmployeeService) { }
 
   async ngOnInit() {
     await this.loadEmployeeStatuses();
+    this.isAdding = false;
   }
 
   transformEmployeeStatuses(statuses: EmployeeStatus[]): EmployeeStatus[] {
@@ -118,67 +109,7 @@ export class HumanresourceComponent implements OnInit {
     }
   }
 
-  // async onSaving(e: any) {
-  //   e.cancel = true; // Prevent the default saving behavior
-    
-  //   if (e.changes.length > 0) {
-  //     const change = e.changes[0];
-      
-  //     if (change.type === 'insert') {
-  //       await this.createEmployeeStatus(change.data);
-  //     } else if (change.type === 'update') {
-  //       await this.updateEmployeeStatus(change.key, change.data);
-  //     } else if (change.type === 'remove') {
-  //       await this.deleteEmployeeStatus(change.key);
-  //     }
-      
-  //     await this.loadEmployeeStatuses(); // Reload the data
-  //   }
-  // }
-
-  // async onSaving(e: any) {
-  //   e.cancel = true;
-  //   if (e.changes.length > 0) {
-  //     const change = e.changes[0];
-  //     try {
-  //       let result : EmployeeStatus;
-  //      if (change.type === 'insert' || change.type === 'update') {
-  //       const data = {
-  //         ...change.data,
-  //         isPKWTCompensation: Boolean(change.data.isPKWTCompensation),
-  //         isProbation: Boolean(change.data.isProbation)
-  //       };
-  //       console.log('Saving data:', data);
-
-  //       if (change.type === 'insert') {
-  //         result = await this.employeeStatusService.createEmployeeStatuses(data);
-  //       } else {
-  //         result = await this.employeeStatusService.updateEmployeeStatuses(data.id, data);
-  //       }
-  //       if (result) {
-  //         const transformedResult = this.transformEmployeeStatuses([result])[0];
-  //         const index = this.employeeStatuses.findIndex(status => status.id === result.id);
-  //         if (index !== -1) {
-  //           this.employeeStatuses[index] = transformedResult;
-  //         } else {
-  //           this.employeeStatuses.push(transformedResult);
-  //         }
-        
-  //       }
-  //       } else if (change.type === 'remove') {
-  //         await this.employeeStatusService.deleteEmployeeStatuses(change.key);
-  //         const index = this.employeeStatuses.findIndex(status => status.id === change.key);
-  //         if (index !== -1) {
-  //           this.employeeStatuses.splice(index, 1);
-  //         }
-  //       }
-       
-  //       e.component.refresh(true);
-  //     } catch (error) {
-  //       console.error('Error saving employee status:', error);
-  //     }
-  //   }
-  // }
+  
   async onSaving(e: any) {
   console.log('onSaving triggered', e);
   e.cancel = true;
@@ -187,12 +118,13 @@ export class HumanresourceComponent implements OnInit {
     try {
       switch (change.type) {
         case 'insert':
+          console.log("change data", change.data)
           const newData = {
             employeeStatusName: change.data.employeeStatusName,
             employeeStatusType: change.data.employeeStatusType,
             duration: change.data.duration,
-            isPKWTCompensation: Boolean(change.data.isPKWTCompensation),
-            isProbation: Boolean(change.data.isProbation)
+            isPKWTCompensation: change.data.isPKWTCompensation === undefined ? false : Boolean(change.data.isPKWTCompensation),
+            isProbation: change.data.isProbation === undefined ? false : Boolean(change.data.isProbation)
           };
           console.log('Creating new employee status:', newData);
           const insertedResult = await this.employeeStatusService.createEmployeeStatuses(newData);
@@ -203,13 +135,14 @@ export class HumanresourceComponent implements OnInit {
           break;
 
         case 'update':
+          var dataUpdated = this.employeeStatuses.filter(x => x.id === change.key);
           const updatedData = {
             id: change.key,
-            employeeStatusName: change.data.employeeStatusName,
-            employeeStatusType: change.data.employeeStatusType,
-            duration: change.data.duration,
-            isPKWTCompensation: Boolean(change.data.isPKWTCompensation),
-            isProbation: Boolean(change.data.isProbation)
+            employeeStatusName: change.data.employeeStatusName ? change.data.employeeStatusName : dataUpdated[0].employeeStatusName,
+            employeeStatusType: change.data.employeeStatusType ? change.data.employeeStatusType : dataUpdated[0].employeeStatusType,
+            duration: change.data.duration ? change.data.duration : dataUpdated[0].duration,
+            isPKWTCompensation: Boolean(change.data.isPKWTCompensation) ? change.data.isPKWTCompensation : dataUpdated[0].isPKWTCompensation,
+            isProbation: Boolean(change.data.isProbation) ? change.data.isProbation : dataUpdated[0].isProbation
           };
           console.log('Updating employee status:', updatedData);
           const updatedResult = await this.employeeStatusService.updateEmployeeStatuses(updatedData.id, updatedData);
@@ -240,6 +173,7 @@ export class HumanresourceComponent implements OnInit {
       alert('An error occurred while saving. Please try again.');
     }
   }
+  this.isAdding = false;
 }
   async createEmployeeStatus(status: any){
     try{
@@ -257,6 +191,8 @@ export class HumanresourceComponent implements OnInit {
       console.error('Error create employee statuses:', error);
     }
   }
+
+  
  onCheckBoxValueChanged(e: any) {
     const updatedValue = e.value;
     console.log(`Checkbox value changed to: ${updatedValue}`);
@@ -267,16 +203,56 @@ export class HumanresourceComponent implements OnInit {
         return status;
     });
  }
+
    onRowClick(e: any) {
     this.selectedEmployeeStatus = e.data;
+   }
+onEditingStart(e: any) {
+  console.log('onEditingStart triggered', e);
+  this.isAdding = e.data === undefined;
+
   }
-  
+  onInitNewRow(e: any) {
+  this.isAdding = true;
+}
+onAddClick() {
+  this.isAdding = true;
+  this.dataGrid.instance.addRow();
+}
+
+  onRowRemoved(e: any) {
+    this.isAdding = false;
+  }
+  getEmployeeStatusTypeName = (rowData: any) => {
+  const statusType = this.employeeStatusTypes.find(type => type.id === rowData.employeeStatusType);
+  return statusType ? statusType.name : '';
+}
   onEditorPreparing(e: any) {
-  if (e.dataField === "isPKWTCompensation" || e.dataField === "isProbation") {
-    e.editorOptions.value = Boolean(e.value);
+
+  if (e.dataField === "employeeStatusType") {
+    e.editorOptions.dataSource = this.employeeStatusTypes;
+    e.editorOptions.displayExpr = "name";
+    e.editorOptions.valueExpr = "id";
     e.editorOptions.onValueChanged = (args: any) => {
-      e.setValue(Boolean(args.value));
+      e.setValue(args.value);
+      console.log(`${e.dataField} changed to:`, args.value);
     };
+  } else if (e.dataField === "isPKWTCompensation" || e.dataField === "isProbation") {
+    e.editorOptions.value = e.value !== undefined ? Boolean(e.value) : false;
+    e.editorOptions.onValueChanged = (args: any) => {
+      const newValue = Boolean(args.value);
+      e.setValue(newValue);
+      console.log(`${e.dataField} changed to:`, newValue);
+    };
+  }
+    if (e.component) {
+    const originalSetCellValue = e.component.option('onSetCellValue');
+    e.component.option('onSetCellValue', (rowData: any, value: any, currentRowData: any) => {
+      console.log(`Setting ${e.dataField} to:`, value);
+      if (originalSetCellValue) {
+        originalSetCellValue(rowData, value, currentRowData);
+      }
+    });
   }
 }
 
